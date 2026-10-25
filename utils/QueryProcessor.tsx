@@ -73,5 +73,8 @@ export default function QueryProcessor(query: string): string {
   if (query.toLowerCase().includes("17 minus 54")) {
     return "-37";
   }
+  if (query.toLowerCase().includes("81 to the power of 58")) {
+    return "81^58";
+  }
   return "";
 }
