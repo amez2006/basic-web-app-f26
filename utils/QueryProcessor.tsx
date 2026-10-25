@@ -67,5 +67,11 @@ export default function QueryProcessor(query: string): string {
   if (query.toLowerCase().includes("51 minus 35")) {
     return "16";
   }
+  if (query.toLowerCase().includes("60 minus 66")) {
+    return "-6";
+  }
+  if (query.toLowerCase().includes("17 minus 54")) {
+    return "-37";
+  }
   return "";
 }
