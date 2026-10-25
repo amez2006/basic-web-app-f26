@@ -93,5 +93,20 @@ export default function QueryProcessor(query: string): string {
         return (num1 / num2).toString();
     }
   }
+  // add a default case for all arithmetic operations
+  function calculateArithmetic(num1: number, operator: string, num2: number): string {
+    switch (operator) {
+      case "plus":
+        return (num1 + num2).toString();
+      case "minus":
+        return (num1 - num2).toString();
+      case "times":
+        return (num1 * num2).toString();
+      case "divided by":
+        return (num1 / num2).toString();
+      default:
+        return "";
+    }
+  }
   return "";
 }
