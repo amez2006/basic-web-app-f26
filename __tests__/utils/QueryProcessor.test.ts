@@ -83,4 +83,28 @@ describe("QueryProcessor", () => {
             "87"
           ));
     });
+
+    test('should return sum of 21 and 25', () => {
+        const query = "What is 21 plus 25?";
+        const response: string = QueryProcessor(query);
+        expect(response).toBe((
+            "46"
+          ));
+    });
+
+    test('should return sum of 78 and 14', () => {
+        const query = "What is 78 plus 14?";
+        const response: string = QueryProcessor(query);
+        expect(response).toBe((
+            "92"
+          ));
+    });
+
+    test('should return sum of 58 and 49', () => {
+        const query = "What is 58 plus 49?";
+        const response: string = QueryProcessor(query);
+        expect(response).toBe((
+            "107"
+          ));
+    });
 });
