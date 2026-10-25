@@ -76,5 +76,22 @@ export default function QueryProcessor(query: string): string {
   if (query.toLowerCase().includes("81 to the power of 58")) {
     return "81^58";
   }
+  // add an arithmetic that does all operation
+  const arithmeticMatch = query.match(/what is (\d+) (plus|minus|times|divided by) (\d+)\?/i);
+  if (arithmeticMatch) {
+    const num1 = parseInt(arithmeticMatch[1], 10);
+    const operator = arithmeticMatch[2];
+    const num2 = parseInt(arithmeticMatch[3], 10);
+    switch (operator) {
+      case "plus":
+        return (num1 + num2).toString();
+      case "minus":
+        return (num1 - num2).toString();
+      case "times":
+        return (num1 * num2).toString();
+      case "divided by":
+        return (num1 / num2).toString();
+    }
+  }
   return "";
 }
