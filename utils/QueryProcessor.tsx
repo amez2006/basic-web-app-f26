@@ -108,5 +108,95 @@ export default function QueryProcessor(query: string): string {
         return "";
     }
   }
+
+  const SCRABBLE: Record<string, number> = {
+  a: 1, e: 1, i: 1, o: 1, u: 1, l: 1, n: 1, s: 1, t: 1, r: 1,
+  d: 2, g: 2,
+  b: 3, c: 3, m: 3, p: 3,
+  f: 4, h: 4, v: 4, w: 4, y: 4,
+  k: 5,
+  j: 8, x: 8,
+  q: 10, z: 10,
+};
+
+function scrabbleScore(word: string): number {
+  return [...word.toLowerCase()].reduce((sum, ch) => sum + (SCRABBLE[ch] ?? 0), 0);
+}
+
+function evaluateArithmetic(query: string): number | null {
+  const match = query.match(/what is (.+?)\??$/i);
+  if (!match) return null;
+
+  // Turn words into symbols: "88 plus 68 multiplied by 52" -> "88 + 68 * 52"
+  const expr = match[1]
+    .toLowerCase()
+    .replace(/to the power of/g, "^")
+    .replace(/multiplied by/g, "*")
+    .replace(/divided by/g, "/")
+    .replace(/plus/g, "+")
+    .replace(/minus/g, "-");
+
+  const tokens = expr.match(/-?\d+(\.\d+)?|[+\-*/^]/g);
+  if (!tokens) return null;
+
+  let pos = 0;
+  const peek = () => tokens[pos];
+  const next = () => tokens[pos++];
+
+  // Precedence: ^ > * / > + -
+  function parseNumber(): number {
+    const t = next();
+    const n = Number(t);
+    if (Number.isNaN(n)) throw new Error(`Bad token: ${t}`);
+    return n;
+  }
+  function parsePower(): number {
+    let base = parseNumber();
+    while (peek() === "^") {
+      next();
+      base = base ** parseNumber();
+    }
+    return base;
+  }
+  function parseTerm(): number {
+    let value = parsePower();
+    while (peek() === "*" || peek() === "/") {
+      const op = next();
+      const rhs = parsePower();
+      value = op === "*" ? value * rhs : value / rhs;
+    }
+    return value;
+  }
+  function parseExpr(): number {
+    let value = parseTerm();
+    while (peek() === "+" || peek() === "-") {
+      const op = next();
+      const rhs = parseTerm();
+      value = op === "+" ? value + rhs : value - rhs;
+    }
+    return value;
+  }
+
+  try {
+    const result = parseExpr();
+    return pos === tokens.length ? result : null;
+  } catch {
+    return null;
+  }
+}
+
+export default function QueryProcessor(query: string): string {
+  const q = query.toLowerCase();
+
+  const scrabble = q.match(/scrabble score of (\w+)/);
+  if (scrabble) {
+    return scrabbleScore(scrabble[1]).toString();
+  }
+
+  const arithmetic = evaluateArithmetic(q);
+  if (arithmetic !== null) {
+    return arithmetic.toString();
+  }
+
   return "";
 }
